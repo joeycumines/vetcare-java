@@ -19,7 +19,6 @@ public class Main {
 		for(Row row : table) {
 			  System.out.println(row.toString());
 		}*/
-		Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-		Connection conn=DriverManager.getConnection("jdbc:ucanaccess://VetCare.mdb"); 
+		Vetcare vetcare = new Vetcare("VetCare.mdb");
 	}
 }
