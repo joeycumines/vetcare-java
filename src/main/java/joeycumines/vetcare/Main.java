@@ -13,13 +13,13 @@ public class Main {
 		System.out.println("Main Thread");
 	/*	DatabaseBuilder builder = new DatabaseBuilder();
 		builder.setReadOnly(true);
-		builder.setFile(new File("Vetcare.mdb"));
+		builder.setFile(new File("VetCare.mdb"));
 		Database db = builder.open();
 		Table table = db.getTable("Breed");
 		for(Row row : table) {
 			  System.out.println(row.toString());
 		}*/
 		Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-		Connection conn=DriverManager.getConnection("jdbc:ucanaccess://Vetcare.mdb"); 
+		Connection conn=DriverManager.getConnection("jdbc:ucanaccess://VetCare.mdb"); 
 	}
 }
