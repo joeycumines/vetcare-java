@@ -98,6 +98,19 @@ st.executeQuery("SELECT * FROM [Appointments] WHERE [Date/Time] >= #"+start+"# A
 			for (int x = 1; x <= rsmd.getColumnCount(); x++) {
 				row.put(rsmd.getColumnName(x), rs.getObject(x));
 			}
+			//add patient and client data
+			//if we have a client id recorded
+			if (row.has("Client Id") && !row.isNull("Client Id")) {
+				String temp = this.getClient(row.getLong("Client Id"));
+				if (temp != null)
+					row.put("clientData", new JSONObject(temp));
+			}
+			//if we have a patient id recorded
+			if (row.has("Patient Id") && !row.isNull("Patient Id")) {
+				String temp = this.getPatient(row.getLong("Patient Id"));
+				if (temp != null)
+					row.put("patientData", new JSONObject(temp));
+			}
 			result.put(row);
 		}
 		
