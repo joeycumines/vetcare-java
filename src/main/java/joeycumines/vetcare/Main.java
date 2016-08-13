@@ -21,5 +21,9 @@ public class Main {
 			  System.out.println(row.toString());
 		}*/
 		Vetcare vetcare = new Vetcare("VetCare.mdb");
+		
+		System.out.println("starting");
+		//System.out.println(vetcare.getClient(356289));
+		System.out.println("done");
 	}
 }

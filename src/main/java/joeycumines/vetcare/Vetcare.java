@@ -2,12 +2,11 @@ package joeycumines.vetcare;
 
 //required for ucanaccess
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.lang.*;
+import org.json.JSONObject;
 
 
 /**
@@ -30,10 +29,29 @@ class Vetcare {
 		conn=DriverManager.getConnection("jdbc:ucanaccess://"+_path); 
 	}
 	
-	public String getClient(long _clientId) {
+	/**
+		Get a client row as a JSON string, given a client ID.
+	*/
+	public String getClient(long _clientId) throws SQLException {
+		Statement st = conn.createStatement();
+		ResultSet rs = 
+				st.executeQuery("SELECT * FROM [Clients] WHERE [Client Id] =" +
+				_clientId + ";");
+		ResultSetMetaData rsmd = rs.getMetaData();
+		while (rs.next()){
+			JSONObject result = new JSONObject();
+			for (int x = 1; x <= rsmd.getColumnCount(); x++) {
+				result.put(rsmd.getColumnName(x), rs.getObject(x));
+			}
+			return result.toString();
+		}
+		
 		return null;
 	}
 	
+	/**
+		Get a patient row as a JSON string, given a patient ID.
+	*/
 	public String getPatient(long _patientId) {
 		return null;
 	}
