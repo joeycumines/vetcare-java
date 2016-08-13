@@ -52,7 +52,20 @@ class Vetcare {
 	/**
 		Get a patient row as a JSON string, given a patient ID.
 	*/
-	public String getPatient(long _patientId) {
+	public String getPatient(long _patientId) throws SQLException {
+		Statement st = conn.createStatement();
+		ResultSet rs = 
+				st.executeQuery("SELECT * FROM [Patients] WHERE [Patient Id] =" +
+				_patientId + ";");
+		ResultSetMetaData rsmd = rs.getMetaData();
+		while (rs.next()){
+			JSONObject result = new JSONObject();
+			for (int x = 1; x <= rsmd.getColumnCount(); x++) {
+				result.put(rsmd.getColumnName(x), rs.getObject(x));
+			}
+			return result.toString();
+		}
+		
 		return null;
 	}
 	

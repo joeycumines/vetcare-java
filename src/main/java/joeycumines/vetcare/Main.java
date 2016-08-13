@@ -24,6 +24,7 @@ public class Main {
 		
 		System.out.println("starting");
 		//System.out.println(vetcare.getClient(356289));
+		//System.out.println(vetcare.getPatient(45257));
 		System.out.println("done");
 	}
 }
