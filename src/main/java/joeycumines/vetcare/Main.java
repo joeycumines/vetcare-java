@@ -25,6 +25,9 @@ public class Main {
 		System.out.println("starting");
 		//System.out.println(vetcare.getClient(356289));
 		//System.out.println(vetcare.getPatient(45257));
+		LocalDateTime start = LocalDateTime.parse("2015-01-01T00:00:00");
+		LocalDateTime end = LocalDateTime.parse("2015-02-01T00:00:00");
+		//System.out.println(vetcare.getAppointments(start, end));
 		System.out.println("done");
 	}
 }

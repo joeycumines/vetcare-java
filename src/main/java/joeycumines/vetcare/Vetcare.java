@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.lang.*;
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 
 /**
@@ -71,24 +72,49 @@ class Vetcare {
 	
 	/**
 		Returns all of the appointments between _start and _end (inclusive),
-		as a string encoded json.
+		as a string encoded json array (ordered by Date asc).
 		
 		The format taken is the flat db table structure, extended with objects
-		for the client and patient.
+		for the client and patient, keyed as "clientData" and "patientData"
+		respectively, fields which will not be present if a match cannot
+		be made.
+		
+		Returns an empty array if no appointments are found.
 	*/
-	public String getAppointments(LocalDateTime _start, LocalDateTime _end) {
-		return null;
+	public String getAppointments(LocalDateTime _start, LocalDateTime _end) 
+		throws SQLException {
+		JSONArray result = new JSONArray();
+		
+		//parse the start and end into isodate compat
+		String start = DateHelper.getLongISODateTimeString(_start).replace("T", " ");
+		String end = DateHelper.getLongISODateTimeString(_end).replace("T", " ");
+		
+		Statement st = conn.createStatement();
+		ResultSet rs = 
+st.executeQuery("SELECT * FROM [Appointments] WHERE [Date/Time] >= #"+start+"# AND [Date/Time] <= #"+end+"# ORDER BY [Date/Time] asc;");
+		ResultSetMetaData rsmd = rs.getMetaData();
+		while (rs.next()){
+			JSONObject row = new JSONObject();
+			for (int x = 1; x <= rsmd.getColumnCount(); x++) {
+				row.put(rsmd.getColumnName(x), rs.getObject(x));
+			}
+			result.put(row);
+		}
+		
+		return result.toString();
 	}
 	
 	/**
 		Returns all of the patient reminders between _start and _end (inclusive)
-		as a string encoded json.
+		as a string encoded json array, ordered by date asc.
 		
 		The format is as the flat db table structure, extended with objects
-		for the client and patient.
+		for the client and patient, keyed as "clientData" and "patientData"
+		respectively, fields which will not be present if a match cannot
+		be made.
 	*/
 	public String getPatientReminders(LocalDateTime _start, 
-			LocalDateTime _end) {
+			LocalDateTime _end) throws SQLException {
 		return null;
 	}
 	
@@ -97,7 +123,7 @@ class Vetcare {
 		table in the database. The result is returned as a string encoded
 		JSON array.
 	*/
-	public String getPatientReminderTypes() {
+	public String getPatientReminderTypes() throws SQLException {
 		return null;
 	}
 	
@@ -107,7 +133,7 @@ class Vetcare {
 	/**
 		Conversion between a visit date (float) and localdatetime.
 	*/
-	public static LocalDateTime convert_visitDateToLocalDateTime(double _input) {
+	public static LocalDateTime convert_visitDateToLocalDateTime(double _input){
 		LocalDateTime result = AT_ZERO_VISIT_DATE;
 		//separate day for temporal reliability
 		long days = (long) Math.floor(_input);
@@ -121,20 +147,24 @@ class Vetcare {
 	/**
 		Conversion between a LocalDateTime and a visit date (float)
 	*/
-	public static double convert_localDateTimeToVisitDate(LocalDateTime _input) {
-		return DateHelper.calculateDaysBetweenLocalDateTime(AT_ZERO_VISIT_DATE, _input);
+	public static double convert_localDateTimeToVisitDate(LocalDateTime _input){
+		return DateHelper.calculateDaysBetweenLocalDateTime(AT_ZERO_VISIT_DATE,
+				 _input);
 	}
 	
 	/**
 		Returns all of the visits between _start and _end (inclusive) as a
-		string encoded json.
+		string encoded json array, ordered by date asc.
 		
 		The format is as the flat db table structure, extended with objects
-		for the client and the patient.
+		for the client and the patient, keyed as "clientData" and "patientData"
+		respectively, fields which will not be present if a match cannot
+		be made.
 		
 		The date field is parsed using the private conversion functions above.
 	*/
-	public String getVisits(LocalDateTime _start, LocalDateTime _end) {
+	public String getVisits(LocalDateTime _start, LocalDateTime _end) throws
+			SQLException {
 		return null;
 	}
 }
