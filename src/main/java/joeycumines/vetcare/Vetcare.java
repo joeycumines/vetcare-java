@@ -158,7 +158,7 @@ st.executeQuery("SELECT * FROM [Patient Reminder Types] ORDER BY [Period] asc;")
 		
 		Statement st = conn.createStatement();
 		ResultSet rs = 
-st.executeQuery("SELECT * FROM [Appointments] WHERE [Date/Time] >= #"+start+"# AND [Date/Time] <= #"+end+"# ORDER BY [Date/Time] asc;");
+st.executeQuery("SELECT * FROM [Patient Reminders] WHERE [Reminder Date] >= #"+start+"# AND [Reminder Date] <= #"+end+"# ORDER BY [Reminder Date] asc;");
 		ResultSetMetaData rsmd = rs.getMetaData();
 		while (rs.next()){
 			JSONObject row = new JSONObject();
@@ -166,17 +166,18 @@ st.executeQuery("SELECT * FROM [Appointments] WHERE [Date/Time] >= #"+start+"# A
 				row.put(rsmd.getColumnName(x), rs.getObject(x));
 			}
 			//add patient and client data
-			//if we have a client id recorded
-			if (row.has("Client Id") && !row.isNull("Client Id")) {
-				String temp = this.getClient(row.getLong("Client Id"));
-				if (temp != null)
-					row.put("clientData", new JSONObject(temp));
-			}
 			//if we have a patient id recorded
 			if (row.has("Patient Id") && !row.isNull("Patient Id")) {
 				String temp = this.getPatient(row.getLong("Patient Id"));
-				if (temp != null)
+				if (temp != null) {
 					row.put("patientData", new JSONObject(temp));
+					//if we have a client id recorded
+					if (row.getJSONObject("patientData").has("Client Id") && !row.getJSONObject("patientData").isNull("Client Id")) {
+						temp = this.getClient(row.getJSONObject("patientData").getLong("Client Id"));
+						if (temp != null)
+							row.put("clientData", new JSONObject(temp));
+					}
+				}
 			}
 			result.put(row);
 		}
