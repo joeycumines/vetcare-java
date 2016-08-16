@@ -223,6 +223,41 @@ st.executeQuery("SELECT * FROM [Patient Reminders] WHERE [Reminder Date] >= #"+s
 	*/
 	public String getVisits(LocalDateTime _start, LocalDateTime _end) throws
 			SQLException {
-		return null;
+		JSONArray result = new JSONArray();
+		
+		//parse the start and end into isodate compat
+		double start = Vetcare.convert_localDateTimeToVisitDate(_start);
+		double end = Vetcare.convert_localDateTimeToVisitDate(_end);
+		
+		Statement st = conn.createStatement();
+		ResultSet rs = 
+st.executeQuery("SELECT * FROM [Visits] WHERE [Date] >= "+start+" AND [Date] <= "+end+" ORDER BY [Date] asc;");
+		ResultSetMetaData rsmd = rs.getMetaData();
+		while (rs.next()){
+			JSONObject row = new JSONObject();
+			for (int x = 1; x <= rsmd.getColumnCount(); x++) {
+				row.put(rsmd.getColumnName(x), rs.getObject(x));
+			}
+			//add patient and client data
+			//if we have a client id recorded
+			if (row.has("Client Id") && !row.isNull("Client Id")) {
+				String temp = this.getClient(row.getLong("Client Id"));
+				if (temp != null)
+					row.put("clientData", new JSONObject(temp));
+			}
+			//if we have a patient id recorded
+			if (row.has("Patient Id") && !row.isNull("Patient Id")) {
+				String temp = this.getPatient(row.getLong("Patient Id"));
+				if (temp != null)
+					row.put("patientData", new JSONObject(temp));
+			}
+			//add the date as a iso string
+			if (row.has("Date") && !row.isNull("Date"))
+				row.put("Date", DateHelper.getLongISODateTimeString(Vetcare.convert_visitDateToLocalDateTime(row.getDouble("Date"))).replace("T", " ")+".0");
+			
+			result.put(row);
+		}
+		
+		return result.toString();
 	}
 }
