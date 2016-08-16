@@ -118,6 +118,28 @@ st.executeQuery("SELECT * FROM [Appointments] WHERE [Date/Time] >= #"+start+"# A
 	}
 	
 	/**
+		Returns all the different types of patient reminders, from the relevant
+		table in the database. The result is returned as a string encoded
+		JSON array.
+	*/
+	public String getPatientReminderTypes() throws SQLException {
+		JSONArray result = new JSONArray();
+		//Reminder, Period
+		Statement st = conn.createStatement();
+		ResultSet rs = 
+st.executeQuery("SELECT * FROM [Patient Reminder Types] ORDER BY [Period] asc;");
+		ResultSetMetaData rsmd = rs.getMetaData();
+		while (rs.next()){
+			JSONObject row = new JSONObject();
+			for (int x = 1; x <= rsmd.getColumnCount(); x++) {
+				row.put(rsmd.getColumnName(x), rs.getObject(x));
+			}
+			result.put(row);
+		}
+		return result.toString();
+	}
+	
+	/**
 		Returns all of the patient reminders between _start and _end (inclusive)
 		as a string encoded json array, ordered by date asc.
 		
@@ -128,16 +150,38 @@ st.executeQuery("SELECT * FROM [Appointments] WHERE [Date/Time] >= #"+start+"# A
 	*/
 	public String getPatientReminders(LocalDateTime _start, 
 			LocalDateTime _end) throws SQLException {
-		return null;
-	}
-	
-	/**
-		Returns all the different types of patient reminders, from the relevant
-		table in the database. The result is returned as a string encoded
-		JSON array.
-	*/
-	public String getPatientReminderTypes() throws SQLException {
-		return null;
+		JSONArray result = new JSONArray();
+		
+		//parse the start and end into isodate compat
+		String start = DateHelper.getLongISODateTimeString(_start).replace("T", " ");
+		String end = DateHelper.getLongISODateTimeString(_end).replace("T", " ");
+		
+		Statement st = conn.createStatement();
+		ResultSet rs = 
+st.executeQuery("SELECT * FROM [Appointments] WHERE [Date/Time] >= #"+start+"# AND [Date/Time] <= #"+end+"# ORDER BY [Date/Time] asc;");
+		ResultSetMetaData rsmd = rs.getMetaData();
+		while (rs.next()){
+			JSONObject row = new JSONObject();
+			for (int x = 1; x <= rsmd.getColumnCount(); x++) {
+				row.put(rsmd.getColumnName(x), rs.getObject(x));
+			}
+			//add patient and client data
+			//if we have a client id recorded
+			if (row.has("Client Id") && !row.isNull("Client Id")) {
+				String temp = this.getClient(row.getLong("Client Id"));
+				if (temp != null)
+					row.put("clientData", new JSONObject(temp));
+			}
+			//if we have a patient id recorded
+			if (row.has("Patient Id") && !row.isNull("Patient Id")) {
+				String temp = this.getPatient(row.getLong("Patient Id"));
+				if (temp != null)
+					row.put("patientData", new JSONObject(temp));
+			}
+			result.put(row);
+		}
+		
+		return result.toString();
 	}
 	
 	private static final LocalDateTime AT_ZERO_VISIT_DATE = 

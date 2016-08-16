@@ -28,6 +28,7 @@ public class Main {
 		LocalDateTime start = LocalDateTime.parse("2015-01-01T00:00:00");
 		LocalDateTime end = LocalDateTime.parse("2015-02-01T00:00:00");
 		//System.out.println(vetcare.getAppointments(start, end));
+		//System.out.println(vetcare.getPatientReminderTypes());
 		System.out.println("done");
 	}
 }
