@@ -77,3 +77,24 @@ Thoughts on the potential end application
 			- follow up messages?
 				- send after?
 				- status filters (include ____)
+
+
+
+
+More implementation specific details:
+User accounts:
+- basic http auth
+/apiv1/login
+/apiv1/logout
+- all other take the auth key
+Creating user accounts:
+- requires an admin account
+	- special case if there are no admin accounts
+	- in which case there is a admin user account created
+
+Deleting user accounts:
+- own user or admin
+changing password:
+own user only
+
+
