@@ -13,6 +13,8 @@ import org.json.JSONObject;
  * @author Joey
  */
 public class MessageAPI implements Serializable {
+	
+	private boolean stop;
 
 	private JSONObject lastError;
 
@@ -32,6 +34,14 @@ public class MessageAPI implements Serializable {
 	public MessageAPI() {
 		accounts = new ConcurrentHashMap<String, Account>();
 		lastError = null;
+		stop = false;
+	}
+	
+	public void stopWorker() {
+		stop = true;
+	}
+	public boolean shouldStop() {
+		return stop;
 	}
 
 	public Account getAccount(String _userName) {
