@@ -3,6 +3,7 @@ package joeycumines.vetcare;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -117,26 +118,19 @@ public class Main {
 	public static final String HELP_COMMAND = "help";
 	public static final String LIST_COMMAND = "list";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ClassNotFoundException, SQLException, SecurityException, IOException {
 		// create a new logger
 		Logger logger = Logger.getLogger(Main.class.getName());
 		// disable console info
 		logger.setUseParentHandlers(false);
 		FileHandler fh;
-		try {
-			// This block configure the logger with handler and formatter
-			fh = new FileHandler("log.txt");
-			logger.addHandler(fh);
-			SimpleFormatter formatter = new SimpleFormatter();
-			fh.setFormatter(formatter);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		// This block configure the logger with handler and formatter
+		fh = new FileHandler("log.txt");
+		logger.addHandler(fh);
+		SimpleFormatter formatter = new SimpleFormatter();
+		fh.setFormatter(formatter);
 		// logger is setup, load up the message API
-		MessageAPI api = new MessageAPI();
+		MessageAPI api = new MessageAPI("VetCare.mdb");
 		// message api is setup, load up the thread that performs background
 		// tasks, such as sending messages
 		MessageWorker worker = new MessageWorker("VetcareMessageWorker", logger, api);
