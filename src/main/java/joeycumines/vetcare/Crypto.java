@@ -51,7 +51,7 @@ public class Crypto {
 	 */
 	public static String toBase64(String _input) {
 		try {
-			return Base64.getUrlEncoder().encodeToString(_input.getBytes("utf-8"));
+			return Base64.getEncoder().encodeToString(_input.getBytes("utf-8"));
 		} catch (UnsupportedEncodingException e) {
 			return null;
 		}
@@ -63,7 +63,7 @@ public class Crypto {
 	 * @return
 	 */
 	public static String fromBase64(String _input) {
-		byte[] asBytes = Base64.getUrlDecoder().decode(_input);
+		byte[] asBytes = Base64.getDecoder().decode(_input);
 		try {
 			return new String(asBytes, "utf-8");
 		} catch (UnsupportedEncodingException e) {
