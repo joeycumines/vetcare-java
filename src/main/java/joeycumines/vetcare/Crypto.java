@@ -1,8 +1,6 @@
 package joeycumines.vetcare;
 
 import java.security.SecureRandom;
-import java.util.Base64;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
@@ -42,32 +40,5 @@ public class Crypto {
 			return null;
 		}
 		return generatedPassword;
-	}
-	
-	/**
-	 * Returns null if it fails.
-	 * @param _input
-	 * @return
-	 */
-	public static String toBase64(String _input) {
-		try {
-			return Base64.getEncoder().encodeToString(_input.getBytes("utf-8"));
-		} catch (UnsupportedEncodingException e) {
-			return null;
-		}
-	}
-	
-	/**
-	 * Returns null if it fails.
-	 * @param _input
-	 * @return
-	 */
-	public static String fromBase64(String _input) {
-		byte[] asBytes = Base64.getDecoder().decode(_input);
-		try {
-			return new String(asBytes, "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			return null;
-		}
 	}
 }
