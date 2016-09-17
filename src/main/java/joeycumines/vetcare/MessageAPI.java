@@ -1,9 +1,7 @@
 package joeycumines.vetcare;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
@@ -19,7 +17,6 @@ public class MessageAPI implements Serializable {
 	private boolean stop;
 
 	private JSONObject lastError;
-	protected Vetcare vetcare;
 
 	/**
 	 * v1
@@ -30,23 +27,14 @@ public class MessageAPI implements Serializable {
 	 * All of the account details, stored in a hashmap for usage.
 	 */
 	private ConcurrentHashMap<String, Account> accounts;
-	
-	/**
-	 * All of the messages we are considering, sorted in chrono order (valid from).
-	 */
-	private Vector<Message> messages;
 
 	/**
 	 * Constructor, we initialize everything.
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
 	 */
-	public MessageAPI(String _vetcarePath) throws ClassNotFoundException, SQLException {
+	public MessageAPI() {
 		accounts = new ConcurrentHashMap<String, Account>();
-		messages = new Vector<Message>();
 		lastError = null;
 		stop = false;
-		vetcare = new Vetcare(_vetcarePath);
 	}
 	
 	public void stopWorker() {
@@ -155,5 +143,4 @@ public class MessageAPI implements Serializable {
 	public JSONObject getLastError() {
 		return lastError;
 	}
-	
 }
