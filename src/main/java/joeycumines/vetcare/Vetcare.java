@@ -1,9 +1,11 @@
 package joeycumines.vetcare;
 
 //required for ucanaccess
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.lang.*;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
@@ -31,7 +33,7 @@ class Vetcare {
 	/**
 		Get a client row as a JSON string, given a client ID.
 	*/
-	public JSONObject getClient(long _clientId) throws SQLException {
+	public String getClient(long _clientId) throws SQLException {
 		Statement st = conn.createStatement();
 		ResultSet rs = 
 				st.executeQuery("SELECT * FROM [Clients] WHERE [Client Id] =" +
@@ -42,7 +44,7 @@ class Vetcare {
 			for (int x = 1; x <= rsmd.getColumnCount(); x++) {
 				result.put(rsmd.getColumnName(x), rs.getObject(x));
 			}
-			return result;
+			return result.toString();
 		}
 		
 		return null;
@@ -51,7 +53,7 @@ class Vetcare {
 	/**
 		Get a patient row as a JSON string, given a patient ID.
 	*/
-	public JSONObject getPatient(long _patientId) throws SQLException {
+	public String getPatient(long _patientId) throws SQLException {
 		Statement st = conn.createStatement();
 		ResultSet rs = 
 				st.executeQuery("SELECT * FROM [Patients] WHERE [Patient Id] =" +
@@ -62,7 +64,7 @@ class Vetcare {
 			for (int x = 1; x <= rsmd.getColumnCount(); x++) {
 				result.put(rsmd.getColumnName(x), rs.getObject(x));
 			}
-			return result;
+			return result.toString();
 		}
 		
 		return null;
@@ -79,7 +81,7 @@ class Vetcare {
 		
 		Returns an empty array if no appointments are found.
 	*/
-	public JSONArray getAppointments(LocalDateTime _start, LocalDateTime _end) 
+	public String getAppointments(LocalDateTime _start, LocalDateTime _end) 
 		throws SQLException {
 		JSONArray result = new JSONArray();
 		
@@ -99,20 +101,20 @@ st.executeQuery("SELECT * FROM [Appointments] WHERE [Date/Time] >= #"+start+"# A
 			//add patient and client data
 			//if we have a client id recorded
 			if (row.has("Client Id") && !row.isNull("Client Id")) {
-				JSONObject temp = this.getClient(row.getLong("Client Id"));
+				String temp = this.getClient(row.getLong("Client Id"));
 				if (temp != null)
-					row.put("clientData", temp);
+					row.put("clientData", new JSONObject(temp));
 			}
 			//if we have a patient id recorded
 			if (row.has("Patient Id") && !row.isNull("Patient Id")) {
-				JSONObject temp = this.getPatient(row.getLong("Patient Id"));
+				String temp = this.getPatient(row.getLong("Patient Id"));
 				if (temp != null)
-					row.put("patientData", temp);
+					row.put("patientData", new JSONObject(temp));
 			}
 			result.put(row);
 		}
 		
-		return result;
+		return result.toString();
 	}
 	
 	/**
@@ -120,7 +122,7 @@ st.executeQuery("SELECT * FROM [Appointments] WHERE [Date/Time] >= #"+start+"# A
 		table in the database. The result is returned as a string encoded
 		JSON array.
 	*/
-	public JSONArray getPatientReminderTypes() throws SQLException {
+	public String getPatientReminderTypes() throws SQLException {
 		JSONArray result = new JSONArray();
 		//Reminder, Period
 		Statement st = conn.createStatement();
@@ -134,7 +136,7 @@ st.executeQuery("SELECT * FROM [Patient Reminder Types] ORDER BY [Period] asc;")
 			}
 			result.put(row);
 		}
-		return result;
+		return result.toString();
 	}
 	
 	/**
@@ -146,7 +148,7 @@ st.executeQuery("SELECT * FROM [Patient Reminder Types] ORDER BY [Period] asc;")
 		respectively, fields which will not be present if a match cannot
 		be made.
 	*/
-	public JSONArray getPatientReminders(LocalDateTime _start, 
+	public String getPatientReminders(LocalDateTime _start, 
 			LocalDateTime _end) throws SQLException {
 		JSONArray result = new JSONArray();
 		
@@ -166,21 +168,21 @@ st.executeQuery("SELECT * FROM [Patient Reminders] WHERE [Reminder Date] >= #"+s
 			//add patient and client data
 			//if we have a patient id recorded
 			if (row.has("Patient Id") && !row.isNull("Patient Id")) {
-				JSONObject temp = this.getPatient(row.getLong("Patient Id"));
+				String temp = this.getPatient(row.getLong("Patient Id"));
 				if (temp != null) {
-					row.put("patientData", temp);
+					row.put("patientData", new JSONObject(temp));
 					//if we have a client id recorded
 					if (row.getJSONObject("patientData").has("Client Id") && !row.getJSONObject("patientData").isNull("Client Id")) {
 						temp = this.getClient(row.getJSONObject("patientData").getLong("Client Id"));
 						if (temp != null)
-							row.put("clientData", temp);
+							row.put("clientData", new JSONObject(temp));
 					}
 				}
 			}
 			result.put(row);
 		}
 		
-		return result;
+		return result.toString();
 	}
 	
 	private static final LocalDateTime AT_ZERO_VISIT_DATE = 
@@ -219,7 +221,7 @@ st.executeQuery("SELECT * FROM [Patient Reminders] WHERE [Reminder Date] >= #"+s
 		
 		The date field is parsed using the private conversion functions above.
 	*/
-	public JSONArray getVisits(LocalDateTime _start, LocalDateTime _end) throws
+	public String getVisits(LocalDateTime _start, LocalDateTime _end) throws
 			SQLException {
 		JSONArray result = new JSONArray();
 		
@@ -239,15 +241,15 @@ st.executeQuery("SELECT * FROM [Visits] WHERE [Date] >= "+start+" AND [Date] <= 
 			//add patient and client data
 			//if we have a client id recorded
 			if (row.has("Client Id") && !row.isNull("Client Id")) {
-				JSONObject temp = this.getClient(row.getLong("Client Id"));
+				String temp = this.getClient(row.getLong("Client Id"));
 				if (temp != null)
-					row.put("clientData", temp);
+					row.put("clientData", new JSONObject(temp));
 			}
 			//if we have a patient id recorded
 			if (row.has("Patient Id") && !row.isNull("Patient Id")) {
-				JSONObject temp = this.getPatient(row.getLong("Patient Id"));
+				String temp = this.getPatient(row.getLong("Patient Id"));
 				if (temp != null)
-					row.put("patientData", temp);
+					row.put("patientData", new JSONObject(temp));
 			}
 			//add the date as a iso string
 			if (row.has("Date") && !row.isNull("Date"))
@@ -256,6 +258,6 @@ st.executeQuery("SELECT * FROM [Visits] WHERE [Date] >= "+start+" AND [Date] <= 
 			result.put(row);
 		}
 		
-		return result;
+		return result.toString();
 	}
 }
