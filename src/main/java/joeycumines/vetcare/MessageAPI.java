@@ -1,8 +1,8 @@
 package joeycumines.vetcare;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
 
@@ -24,13 +24,13 @@ public class MessageAPI implements Serializable {
 	/**
 	 * All of the account details, stored in a hashmap for usage.
 	 */
-	private ConcurrentHashMap<String, Account> accounts;
+	private HashMap<String, Account> accounts;
 
 	/**
 	 * Constructor, we initialize everything.
 	 */
 	public MessageAPI() {
-		accounts = new ConcurrentHashMap<String, Account>();
+		accounts = new HashMap<String, Account>();
 		lastError = null;
 	}
 

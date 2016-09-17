@@ -5,9 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A user account.
@@ -27,7 +27,7 @@ public class Account implements Serializable {
 	private String passSalt;
 	private String userName;
 	private boolean isAdmin;
-	private ConcurrentHashMap<String, Session> sessions;
+	private HashMap<String, Session> sessions;
 
 	public Account(String _userName, String _fullName, boolean _isAdmin) {
 		userName = _userName;
@@ -35,7 +35,7 @@ public class Account implements Serializable {
 		passHash = null;
 		passSalt = null;
 		isAdmin = _isAdmin;
-		sessions = new ConcurrentHashMap<String, Session>();
+		sessions = new HashMap<String, Session>();
 	}
 
 	public void setFullName(String _fullName) {
@@ -109,14 +109,6 @@ public class Account implements Serializable {
 		Session sess = new Session(Crypto.nextSessionId(), _liveForSeconds);
 		sessions.put(sess.getSessionId(), sess);
 		return sess;
-	}
-	
-	/**
-	 * Removes a session from the object.
-	 * @param _apiKey
-	 */
-	public void removeSession(String _apiKey) {
-		this.sessions.remove(_apiKey);
 	}
 
 	private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
