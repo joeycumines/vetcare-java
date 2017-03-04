@@ -50,3 +50,5 @@ Temporary Items
 .gradle/
 # Ignore the build folder
 build/
+
+/.idea/
