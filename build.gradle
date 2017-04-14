@@ -1,6 +1,9 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'application'
+apply plugin: 'maven'
+
+group = 'com.github.joeycumines'
 
 mainClassName= "joeycumines.vetcare.Main"
 
@@ -17,7 +20,7 @@ repositories {
 // tag::jar[]
 jar {
     baseName = 'vetcare-extension'
-    version =  '0.1.0'
+    version =  '1.0.0'
 }
 // end::jar[]
 
